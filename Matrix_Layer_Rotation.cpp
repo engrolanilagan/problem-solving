@@ -1,90 +1,73 @@
 // Problem from https://www.hackerrank.com/challenges/matrix-rotation-algo
 
+#include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <bits/stdc++.h>
+char* readline();
+char* ltrim(char*);
+char* rtrim(char*);
+char** split_string(char*);
 
-using namespace std;
+int main() {
 
-string ltrim(const string &);
-string rtrim(const string &);
-vector<string> split(const string &);
-
-// Complete the matrixRotation function below.
-void matrixRotation(vector<vector<int>> matrix, int r) {
-
-
-}
-
-int main()
-{
-    string mnr_temp;
-    getline(cin, mnr_temp);
-
-    vector<string> mnr = split(rtrim(mnr_temp));
-
-    int m = stoi(mnr[0]);
-
-    int n = stoi(mnr[1]);
-
-    int r = stoi(mnr[2]);
-
-    vector<vector<int>> matrix(m);
-
-    for (int i = 0; i < m; i++) {
-        matrix[i].resize(n);
-
-        string matrix_row_temp_temp;
-        getline(cin, matrix_row_temp_temp);
-
-        vector<string> matrix_row_temp = split(rtrim(matrix_row_temp_temp));
-
-        for (int j = 0; j < n; j++) {
-            int matrix_row_item = stoi(matrix_row_temp[j]);
-
-            matrix[i][j] = matrix_row_item;
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+    int rows,cols,rot;
+    scanf("%d%d%d",&rows,&cols,&rot);
+    int arr[rows][cols];
+    int result[rows][cols];
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            scanf("%d", &arr[r][c]);
         }
     }
 
-    matrixRotation(matrix, r);
+    rows--;
+    cols--;
+    for (int r = 0; r <= rows; r++) {
+        for (int c = 0; c <= cols; c++) {
+            int x = r < rows - r ? r : rows - r;
+            int y = c < cols - c ? c : cols - c;
+            int min = x < y ? x : y;
+            int maxRow = rows - min;
+            int maxCol = cols - min;
+            int parameter = (maxRow + maxCol) * 2 - min * 4;
 
-    return 0;
-}
-
-string ltrim(const string &str) {
-    string s(str);
-
-    s.erase(
-        s.begin(),
-        find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace)))
-    );
-
-    return s;
-}
-
-string rtrim(const string &str) {
-    string s(str);
-
-    s.erase(
-        find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(),
-        s.end()
-    );
-
-    return s;
-}
-
-vector<string> split(const string &str) {
-    vector<string> tokens;
-
-    string::size_type start = 0;
-    string::size_type end = 0;
-
-    while ((end = str.find(" ", start)) != string::npos) {
-        tokens.push_back(str.substr(start, end - start));
-
-        start = end + 1;
+            int row = r;
+            int col = c;
+            for (int a = 0; a < rot%parameter; a++) {
+                if (col == min && row < maxRow) {
+                    row++;
+                }
+                else if (row == maxRow && col < maxCol) {
+                    col++;
+                }
+                else if (row > min && col == maxCol) {
+                    row--;
+                }
+                else if (row == min && col > min) {
+                    col--;
+                }
+            }
+            result[row][col] = arr[r][c];
+        }
     }
 
-    tokens.push_back(str.substr(start));
 
-    return tokens;
+    for (int r = 0; r <= rows; r++) {
+        for (int c = 0; c <= cols; c++) {
+            printf("%d ", result[r][c]);
+        }
+        printf("\n");
+    }
+
+
+    return 0;
 }
